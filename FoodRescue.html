@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FoodRescue</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE occasion website, warm and practical: a service people use at closing time
+   IDEA a market crate tag / pickup ticket: big hanging pickup times, ruled rows, stamped status
+   PICTURE wide scene: restaurant with striped awning, van driving the road, community kitchen
+   COLOUR leaf green field, tomato accent, butter yellow support, white ground; night = deep green
+   TYPE Familjen Grotesk 700 display + Instrument Sans text
+   LAYOUT title across top of green band, scene full width beneath; board as ruled list; phone stacks */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0c1a14);--ink:light-dark(#13211a,#eef5ef);--soft:light-dark(#4b5d53,#a9bcb0);--line:light-dark(#dfe6e1,#22392d);--panel:light-dark(#f3f7f4,#12261d);--leaf:light-dark(#145c3e,#0f3b29);--leaf2:light-dark(#0f4a32,#0a2e20);--tom:light-dark(#e8452a,#ff6a4d);--but:#ffcf3d;--on:#ffffff}
+:root[data-theme=light]{color-scheme:light}
+:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Instrument Sans",system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:"Familjen Grotesk",system-ui,sans-serif;line-height:1.05;letter-spacing:-.02em;text-wrap:balance;margin:0}
+h2{font-size:clamp(30px,4vw,44px)}
+h3{font-size:21px}
+p{margin:0}
+a{color:inherit}
+.band{padding-block:clamp(36px,5vw,72px);padding-inline:max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+.lede{color:var(--soft);max-width:62ch;margin-top:12px;font-size:17px}
+nav{position:sticky;top:0;z-index:5;background:var(--leaf2);color:var(--on);padding:10px max(5vw,16px)}
+nav .wrap{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:8px;font:700 21px "Familjen Grotesk",sans-serif;text-decoration:none}
+.links{display:flex;gap:4px;overflow-x:auto;flex:1}
+.links a{flex:none;text-decoration:none;padding:10px 12px;border-radius:8px;font-weight:500}
+.links a:hover{background:rgba(255,255,255,.12)}
+.btn{font:600 16px "Instrument Sans",sans-serif;min-height:44px;padding:10px 18px;border-radius:10px;border:2px solid transparent;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap}
+.btn:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible,.links a:focus-visible{outline:3px solid var(--but);outline-offset:2px}
+.tom{background:var(--tom);color:#fff}
+.tom:hover{filter:brightness(1.08)}
+.but{background:var(--but);color:#1b1a0e}
+.ghost{background:transparent;border-color:currentColor;color:inherit}
+.hero{background:var(--leaf);color:var(--on);padding-bottom:0}
+.hero h1{font-size:clamp(36px,5.4vw,60px);max-width:16ch}
+.hero .top{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:24px 48px;align-items:end}
+.hero p{color:#d6eadf;font-size:18px;max-width:52ch}
+.ctas{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+.scene{display:block;width:100%;height:auto;margin-top:28px}
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--leaf2);color:#d6eadf;padding:14px max(5vw,16px);gap:12px}
+.flow b{color:#fff;display:block;font-size:17px}
+.van{animation:drive 9s ease-in-out infinite}
+@keyframes drive{0%,8%{transform:translateX(0)}46%,58%{transform:translateX(400px)}96%,100%{transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.van{animation:none;transform:translateX(200px)}html{scroll-behavior:auto}}
+.boardhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:20px}
+.stats{display:flex;gap:28px;flex-wrap:wrap}
+.stat b{display:block;font:700 clamp(32px,4vw,44px)/1 "Familjen Grotesk",sans-serif;font-variant-numeric:tabular-nums}
+.stat span{color:var(--soft);font-size:14px}
+.filters{display:flex;flex-wrap:wrap;gap:10px;margin:24px 0 8px;align-items:center}
+select,input,textarea{font:16px "Instrument Sans",sans-serif;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;min-height:44px;padding:8px 12px}
+.chip{min-height:44px;padding:8px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font:500 15px "Instrument Sans",sans-serif;cursor:pointer}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.note{font-size:14px;color:var(--soft)}
+.board{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:32px;margin-top:8px;align-items:start}
+.list{border-top:3px solid var(--ink)}
+.row{display:grid;grid-template-columns:7.5em minmax(0,1fr) auto;gap:6px 20px;padding:18px 0;border-bottom:1px solid var(--line);align-items:start}
+.time{font:700 26px/1 "Familjen Grotesk",sans-serif;white-space:nowrap}
+.left{display:block;font:500 14px "Instrument Sans",sans-serif;color:var(--tom);margin-top:6px;white-space:nowrap}
+.row h3{font-size:20px}
+.meta{color:var(--soft);font-size:15px;margin-top:4px}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{font-size:13px;font-weight:600;padding:3px 9px;border-radius:6px;background:var(--panel)}
+.veg{color:light-dark(#11663f,#7fe0ac)}
+.nv{color:light-dark(#b2341d,#ff9c86)}
+.act{text-align:right;display:grid;gap:8px;justify-items:end}
+.qty{font:700 28px/1 "Familjen Grotesk",sans-serif;white-space:nowrap}
+.qty small{font:500 14px "Instrument Sans",sans-serif;color:var(--soft)}
+.stamp{display:inline-block;border:2px solid var(--tom);color:var(--tom);font-weight:700;padding:4px 10px;border-radius:6px;transform:rotate(-3deg);white-space:nowrap}
+.claimed{opacity:.75}
+.claimbox{grid-column:2/-1;display:flex;flex-wrap:wrap;gap:8px;background:var(--panel);padding:12px;border-radius:12px}
+.claimbox input{flex:1 1 200px}
+.empty{padding:32px 0;color:var(--soft)}
+.panel{background:var(--panel);border-radius:16px;padding:22px;display:grid;gap:12px}
+.panel label{display:grid;gap:4px;font-weight:600;font-size:15px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.msg{font-size:15px;font-weight:600;color:light-dark(#11663f,#7fe0ac);min-height:1.4em}
+.how{background:var(--panel)}
+.cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px;margin-top:32px}
+.steps{list-style:none;margin:18px 0 0;padding:0}
+.steps li{position:relative;padding:0 0 22px 34px}
+.steps li::before{content:"";position:absolute;left:5px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--tom)}
+.steps li::after{content:"";position:absolute;left:11px;top:24px;bottom:2px;width:2px;background:var(--line)}
+.steps li:last-child::after{display:none}
+.steps b{display:block;font-size:17px}
+.steps span{color:var(--soft)}
+.who{display:flex;align-items:center;gap:12px}
+.who svg{flex:none}
+.calc{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:32px;align-items:center}
+.range{display:grid;gap:6px;margin-top:18px}
+.range label{font-weight:600;display:flex;justify-content:space-between}
+input[type=range]{accent-color:var(--tom);min-height:44px;border:0;padding:0;background:transparent}
+.big{font:700 clamp(52px,8vw,88px)/1 "Familjen Grotesk",sans-serif;color:var(--tom);font-variant-numeric:tabular-nums}
+.plates{display:flex;flex-wrap:wrap;gap:4px;margin-top:14px}
+.plates i{width:14px;height:14px;border-radius:50%;background:var(--but);box-shadow:inset 0 -3px 0 rgba(0,0,0,.15)}
+.safe{background:var(--leaf);color:var(--on)}
+.safe .lede{color:#d6eadf}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(15em,1fr));gap:2px;margin-top:28px;background:rgba(255,255,255,.18);border-radius:14px;overflow:hidden}
+.rules div{background:var(--leaf2);padding:20px}
+.rules b{display:block;font:700 26px "Familjen Grotesk",sans-serif;color:var(--but);white-space:nowrap}
+.rules span{color:#d6eadf}
+.join{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin-top:28px}
+details{border-bottom:1px solid var(--line);padding:6px 0}
+summary{cursor:pointer;font-weight:600;font-size:18px;min-height:44px;display:flex;align-items:center}
+details p{color:var(--soft);padding:0 0 14px;max-width:70ch}
+.faq{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:32px}
+footer{background:var(--leaf2);color:#d6eadf}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;align-items:end}
+footer h2{color:#fff}
+@media(max-width:900px){.board,.calc,.faq{grid-template-columns:minmax(0,1fr)}.hero .top{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:640px){.cols,.join,.two{grid-template-columns:minmax(0,1fr)}.flow{grid-template-columns:minmax(0,1fr);gap:6px}.row{grid-template-columns:minmax(0,1fr) auto}.row .tcol{grid-column:1/-1;display:flex;gap:12px;align-items:baseline}.left{margin:0}.claimbox{grid-column:1/-1}.navcta{display:none}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#top"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="16" r="10" fill="#e8452a"/><path d="M14 6c0-3 3-5 6-4-1 3-3 4-6 4z" fill="#7fe0ac"/><circle cx="10" cy="13" r="2.5" fill="#fff" opacity=".35"/></svg>FoodRescue</a>
+    <div class="links">
+      <a href="#board">Surplus board</a><a href="#how">How it works</a><a href="#safety">Food safety</a><a href="#join">Join</a><a href="#faq">FAQ</a>
+    </div>
+    <a class="btn but navcta" href="#post">Post surplus</a>
+  </div>
+</nav>
+
+<header class="band hero" id="top">
+  <div class="wrap">
+    <div class="top">
+      <h1>Restaurant surplus, rescued the same night</h1>
+      <div>
+        <p>FoodRescue connects restaurants that have good food left at closing with the shelters, community kitchens and NGOs that share it. Post what you have in a minute; a nearby organization claims it and picks it up.</p>
+        <div class="ctas"><a class="btn but" href="#post">I run a restaurant</a><a class="btn ghost" href="#board">I run a food organization</a></div>
+      </div>
+    </div>
+    <svg class="scene" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMax meet" role="img" aria-label="A van carries food crates from a restaurant to a community kitchen">
+      <defs>
+        <pattern id="aw" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="20" height="40" fill="#e8452a"/><rect x="20" width="20" height="40" fill="#fff"/></pattern>
+        <linearGradient id="win" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe58a"/><stop offset="1" stop-color="#ffb43d"/></linearGradient>
+        <g id="tree"><rect x="-4" y="-10" width="8" height="40" fill="#0b3a26"/><circle r="30" cy="-30" fill="#1f7a50"/><circle r="20" cx="-10" cy="-40" fill="#2f9563"/></g>
+        <g id="crate"><rect x="-26" y="-22" width="52" height="22" rx="3" fill="#c98a3d"/><rect x="-26" y="-12" width="52" height="3" fill="#a66d2a"/><circle cx="-14" cy="-26" r="8" fill="#e8452a"/><circle cx="2" cy="-27" r="8" fill="#ffcf3d"/><circle cx="16" cy="-25" r="7" fill="#3aa86b"/></g>
+      </defs>
+      <circle cx="840" cy="60" r="34" fill="#ffcf3d" opacity=".9"/>
+      <rect y="250" width="1000" height="50" fill="#0f4a32"/>
+      <rect y="262" width="1000" height="22" fill="#1d2a24"/>
+      <g fill="#ffcf3d">
+        <rect x="40" y="271" width="40" height="4" rx="2"/><rect x="140" y="271" width="40" height="4" rx="2"/><rect x="240" y="271" width="40" height="4" rx="2"/><rect x="340" y="271" width="40" height="4" rx="2"/><rect x="440" y="271" width="40" height="4" rx="2"/><rect x="540" y="271" width="40" height="4" rx="2"/><rect x="640" y="271" width="40" height="4" rx="2"/><rect x="740" y="271" width="40" height="4" rx="2"/><rect x="840" y="271" width="40" height="4" rx="2"/><rect x="940" y="271" width="40" height="4" rx="2"/>
+      </g>
+      <!-- restaurant -->
+      <rect x="40" y="96" width="230" height="156" fill="#f4efe6"/>
+      <rect x="230" y="96" width="40" height="156" fill="#ddd5c6"/>
+      <rect x="30" y="80" width="250" height="18" fill="#0b3a26"/>
+      <path d="M36 98h238l-12 40H48z" fill="url(#aw)"/>
+      <path d="M48 138h214" stroke="#b2341d" stroke-width="4"/>
+      <rect x="62" y="160" width="86" height="62" rx="4" fill="url(#win)"/>
+      <rect x="170" y="162" width="46" height="90" rx="3" fill="#0b3a26"/>
+      <circle cx="207" cy="210" r="3" fill="#ffcf3d"/>
+      <use href="#crate" x="110" y="252"/><use href="#crate" x="300" y="252"/>
+      <!-- community kitchen -->
+      <path d="M700 120 795 70 890 120z" fill="#e8452a"/>
+      <path d="M795 70 890 120h-20z" fill="#b2341d"/>
+      <rect x="712" y="120" width="166" height="132" fill="#fff"/>
+      <rect x="848" y="120" width="30" height="132" fill="#e3ebe6"/>
+      <rect x="770" y="176" width="50" height="76" rx="25" fill="#0b3a26"/>
+      <rect x="728" y="140" width="34" height="34" rx="3" fill="url(#win)"/><rect x="828" y="140" width="34" height="34" rx="3" fill="url(#win)"/>
+      <circle cx="795" cy="100" r="10" fill="#fff"/><path d="M790 100h10M795 95v10" stroke="#e8452a" stroke-width="3"/>
+      <use href="#tree" x="940" y="222"/><use href="#tree" x="640" y="226"/><use href="#crate" x="930" y="252"/>
+      <!-- van -->
+      <g class="van">
+        <ellipse cx="230" cy="262" rx="86" ry="6" fill="#000" opacity=".25"/>
+        <path d="M150 196h120l34 24v40H150z" fill="#fff"/>
+        <path d="M270 196l34 24h-34z" fill="#bfe3f2"/>
+        <rect x="150" y="230" width="154" height="10" fill="#e8452a"/>
+        <rect x="150" y="196" width="120" height="6" fill="#e9efeb"/>
+        <circle cx="180" cy="260" r="14" fill="#1d2a24"/><circle cx="180" cy="260" r="5" fill="#9aa"/>
+        <circle cx="275" cy="260" r="14" fill="#1d2a24"/><circle cx="275" cy="260" r="5" fill="#9aa"/>
+        <circle cx="168" cy="214" r="9" fill="#e8452a"/><path d="M168 205c0-4 4-6 7-5" stroke="#1f7a50" stroke-width="3" fill="none"/>
+      </g>
+    </svg>
+  </div>
+</header>
+<div class="flow">
+  <div><b>Restaurant posts surplus</b>What, how much, and the pickup deadline</div>
+  <div><b>Organization claims it</b>Nearby groups see the listing and reserve it</div>
+  <div><b>Picked up and shared</b>A pickup code confirms the handover</div>
+</div>
+
+<section class="band" id="board">
+  <div class="wrap">
+    <div class="boardhead">
+      <div><h2>Surplus board</h2><p class="lede">Open listings near you, soonest pickup first. Claim one and show the pickup code at the restaurant.</p></div>
+      <div class="stats"><div class="stat"><b id="sOpen">0</b><span>open listings</span></div><div class="stat"><b id="sPort">0</b><span>portions available</span></div><div class="stat"><b id="sClaimed">0</b><span>claimed tonight</span></div></div>
+    </div>
+    <div class="filters">
+      <select id="fArea" aria-label="Area"></select>
+      <button class="chip" id="fVeg" aria-pressed="false">Veg only</button>
+      <button class="chip" id="fOpen" aria-pressed="true">Open only</button>
+      <input id="fQ" type="search" placeholder="Search dishes or restaurants" aria-label="Search">
+    </div>
+    <p class="note">Sample listings for this demo. Posts and claims stay on this page and reset on reload.</p>
+    <div class="board">
+      <div class="list" id="list" aria-live="polite"></div>
+      <form class="panel" id="post" autocomplete="off">
+        <h3>Post surplus food</h3>
+        <label>Restaurant<input id="pName" required placeholder="e.g. Hotel Annapoorna"></label>
+        <div class="two">
+          <label>Area<select id="pArea"></select></label>
+          <label>Portions<input id="pQty" type="number" min="1" max="999" value="20" required></label>
+        </div>
+        <label>What's available<input id="pItems" required placeholder="e.g. Veg biryani, raita"></label>
+        <div class="two">
+          <label>Type<select id="pType"><option value="veg">Veg</option><option value="nv">Non-veg</option></select></label>
+          <label>Kind<select id="pKind"><option>Cooked meals</option><option>Bakery</option><option>Fresh produce</option><option>Packaged</option></select></label>
+        </div>
+        <label>Pick up within<select id="pWin"><option value="60">1 hour</option><option value="90">1½ hours</option><option value="120" selected>2 hours</option></select></label>
+        <button class="btn tom" type="submit">Post to the board</button>
+        <p class="msg" id="pMsg"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="band how" id="how">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <p class="lede">Two sides, one short loop. Restaurants spend about a minute per post; organizations get a live view of what's nearby.</p>
+    <div class="cols">
+      <div>
+        <div class="who"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><rect x="4" y="14" width="32" height="22" fill="#e8452a"/><path d="M2 14h36l-4-8H6z" fill="#ffcf3d"/><rect x="16" y="24" width="8" height="12" fill="#fff"/></svg><h3>For restaurants</h3></div>
+        <ol class="steps">
+          <li><b>Sign up once</b><span>Add your FSSAI licence number, address and usual closing time.</span></li>
+          <li><b>Post at closing</b><span>Dish, portions, veg or non-veg, and how long it can wait.</span></li>
+          <li><b>Hand over</b><span>Check the volunteer's pickup code, hand over the food, done.</span></li>
+          <li><b>See your total</b><span>A monthly summary of portions given, useful for CSR reports.</span></li>
+        </ol>
+      </div>
+      <div>
+        <div class="who"><svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true"><path d="M4 18 20 6l16 12z" fill="#e8452a"/><rect x="7" y="18" width="26" height="18" fill="#145c3e"/><rect x="16" y="24" width="8" height="12" fill="#ffcf3d"/></svg><h3>For food organizations</h3></div>
+        <ol class="steps">
+          <li><b>Get verified</b><span>Share your registration and the areas you can cover.</span></li>
+          <li><b>Get alerts</b><span>New listings in your areas arrive by SMS or WhatsApp.</span></li>
+          <li><b>Claim and collect</b><span>Reserve a listing, send a volunteer with the pickup code.</span></li>
+          <li><b>Confirm delivery</b><span>Mark it served so the restaurant knows where the food went.</span></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap calc">
+    <div>
+      <h2>What your kitchen could give</h2>
+      <p class="lede">Move the sliders to match a typical week of leftovers.</p>
+      <div class="range"><label for="cPor">Portions left at closing <span id="cPorV"></span></label><input type="range" id="cPor" min="5" max="150" step="5" value="30"></div>
+      <div class="range"><label for="cDays">Days a week with surplus <span id="cDaysV"></span></label><input type="range" id="cDays" min="1" max="7" value="5"></div>
+    </div>
+    <div>
+      <div class="big" id="cOut">0</div>
+      <p><b>meals a month</b> shared instead of thrown away, about <b id="cKg">0</b> of food at roughly 400 g a portion.</p>
+      <div class="plates" id="cPlates" aria-hidden="true"></div>
+      <p class="note" style="margin-top:8px">Each dot is 10 meals.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band safe" id="safety">
+  <div class="wrap">
+    <h2>Food safety comes first</h2>
+    <p class="lede">Every listing follows FSSAI's surplus food rules (Recovery and Distribution of Surplus Food Regulations, 2019) and standard hot and cold holding guidance.</p>
+    <div class="rules">
+      <div><b>Above 60 °C</b><span>Hot food stays hot until pickup.</span></div>
+      <div><b>Below 5 °C</b><span>Cold and perishable items stay refrigerated.</span></div>
+      <div><b>2 hours max</b><span>Pickup window for cooked food on the board.</span></div>
+      <div><b>Labelled</b><span>Prep time, veg or non-veg, and common allergens on every container.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="join">
+  <div class="wrap">
+    <h2>Join FoodRescue</h2>
+    <p class="lede">Free for restaurants and registered food organizations in Bengaluru.</p>
+    <div class="join">
+      <form class="panel" id="jR" autocomplete="off">
+        <h3>Register a restaurant</h3>
+        <label>Restaurant name<input id="jRName" required></label>
+        <div class="two"><label>FSSAI licence no.<input id="jRLic" inputmode="numeric" required></label><label>Area<select id="jRArea"></select></label></div>
+        <label>Contact phone<input id="jRPh" type="tel" required></label>
+        <button class="btn tom" type="submit">Register restaurant</button>
+        <p class="msg" id="jRMsg"></p>
+      </form>
+      <form class="panel" id="jO" autocomplete="off">
+        <h3>Register an organization</h3>
+        <label>Organization name<input id="jOName" required></label>
+        <div class="two"><label>Registration no.<input id="jOReg" required></label><label>Main area<select id="jOArea"></select></label></div>
+        <div class="two"><label>People served daily<input id="jOCap" type="number" min="1" required></label><label>Own vehicle<select id="jOVeh"><option>Yes</option><option>No, need help</option></select></label></div>
+        <button class="btn tom" type="submit">Register organization</button>
+        <p class="msg" id="jOMsg"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section class="band how" id="faq">
+  <div class="wrap faq">
+    <div><h2>Questions</h2><p class="lede">Anything else, write to us.</p></div>
+    <div>
+      <details open><summary>What food can be posted?</summary><p>Cooked meals that were never served, bakery items, fresh produce and sealed packaged food within its date. Plate leftovers and food that has been out of safe temperature can't be posted.</p></details>
+      <details><summary>What happens if nobody claims a listing?</summary><p>Listings close at the pickup deadline. If a listing is close to expiring, nearby organizations get a second alert.</p></details>
+      <details><summary>Who does the pickup?</summary><p>The organization that claims a listing sends its own volunteer or driver. Organizations without a vehicle can mark that at sign-up so we can pair them with volunteer drivers.</p></details>
+      <details><summary>Do organizations have to be registered?</summary><p>Yes. We verify each organization's registration before it can claim food, so restaurants know who they're handing it to.</p></details>
+      <details><summary>Does it cost anything?</summary><p>No. FoodRescue is free for restaurants and food organizations.</p></details>
+    </div>
+  </div>
+</section>
+
+<footer class="band">
+  <div class="wrap">
+    <div><h2>Have food left tonight?</h2><p style="margin-top:8px">hello@foodrescue.in · +91 80 5550 0123 · Bengaluru</p><p class="note" style="color:#a9c9b6;margin-top:4px">Contact details are sample.</p></div>
+    <a class="btn but" href="#post">Post surplus</a>
+  </div>
+</footer>
+
+<script>
+{
+const AREAS=["Indiranagar","Koramangala","Jayanagar","JP Nagar","HSR Layout","Malleshwaram","Whitefield","Kumaraswamy Layout"];
+const now=Date.now(),M=60000;
+let seq=0;
+const L=(rest,area,items,qty,type,kind,mins,status,org)=>({id:++seq,rest,area,items,qty,type,kind,by:now+mins*M,status:status||"open",org:org||"",code:status?String(1000+Math.floor(Math.random()*9000)):""});
+const data=[
+  L("Hotel Annapoorna","Jayanagar","Veg pulao, dal, curd rice",40,"veg","Cooked meals",55),
+  L("Third Wave Bakehouse","Indiranagar","Croissants, focaccia, banana bread",25,"veg","Bakery",95),
+  L("Nandhini Deluxe","Koramangala","Chicken biryani, raita",30,"nv","Cooked meals",70),
+  L("Green Basket Café","HSR Layout","Mixed salad bowls, cut fruit",18,"veg","Fresh produce",40),
+  L("Udupi Grand","Kumaraswamy Layout","Idli, sambar, chapati with kurma",60,"veg","Cooked meals",110),
+  L("Coastal Kitchen","JP Nagar","Fish curry, rice",22,"nv","Cooked meals",85,"claimed","Akshaya Community Kitchen"),
+  L("Brew & Bun","Whitefield","Sealed sandwiches, juice packs",35,"veg","Packaged",120),
+  L("Malgudi Mess","Malleshwaram","Bisi bele bath, curd rice",45,"veg","Cooked meals",65,"claimed","Hope Night Shelter")
+];
+const f={area:"",veg:false,open:true,q:""};
+let claiming=0;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clock=t=>new Date(t).toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit",hour12:true}).toLowerCase();
+const left=t=>{const m=Math.round((t-Date.now())/M);if(m<=0)return"closed";const h=Math.floor(m/60);return(h?h+"h ":"")+(m%60)+"m left"};
+const opts=sel=>AREAS.map(a=>`<option>${a}</option>`).join("");
+$("fArea").innerHTML=`<option value="">All areas</option>`+opts();
+["pArea","jRArea","jOArea"].forEach(id=>$(id).innerHTML=opts());
+
+function render(){
+  const q=f.q.toLowerCase();
+  const rows=data.filter(d=>(!f.area||d.area===f.area)&&(!f.veg||d.type==="veg")&&(!f.open||d.status==="open")&&(!q||(d.rest+" "+d.items).toLowerCase().includes(q))).sort((a,b)=>(a.status>b.status?-1:a.status<b.status?1:0)||a.by-b.by);
+  $("list").innerHTML=rows.length?rows.map(d=>{
+    const cl=d.status==="claimed";
+    const act=cl?`<span class="stamp">Claimed</span><button class="btn ghost" data-rel="${d.id}" style="min-height:40px;padding:6px 12px;font-size:14px">Release</button>`:`<button class="btn tom" data-claim="${d.id}">Claim</button>`;
+    const box=claiming===d.id?`<div class="claimbox"><input id="cOrg" placeholder="Your organization" aria-label="Your organization"><button class="btn tom" data-ok="${d.id}">Confirm</button><button class="btn ghost" data-cancel="1">Cancel</button></div>`:"";
+    return `<div class="row${cl?" claimed":""}">
+      <div class="tcol"><span class="time">${clock(d.by)}</span><span class="left">${cl?"pickup by":left(d.by)}</span></div>
+      <div><h3>${esc(d.rest)}</h3><p class="meta">${esc(d.items)}</p>
+        <div class="tags"><span class="tag ${d.type}">${d.type==="veg"?"Veg":"Non-veg"}</span><span class="tag">${esc(d.kind)}</span><span class="tag">${esc(d.area)}</span></div>
+        ${cl?`<p class="meta">Claimed by <b>${esc(d.org)}</b> · pickup code <b>${d.code}</b></p>`:""}</div>
+      <div class="act"><span class="qty">${d.qty} <small>portions</small></span>${act}</div>${box}</div>`}).join(""):`<p class="empty">No listings match. Try another area or turn off a filter.</p>`;
+  const open=data.filter(d=>d.status==="open");
+  $("sOpen").textContent=open.length;
+  $("sPort").textContent=open.reduce((s,d)=>s+d.qty,0);
+  $("sClaimed").textContent=data.length-open.length;
+  if(claiming&&$("cOrg"))$("cOrg").focus();
+}
+
+$("list").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.claim){claiming=+b.dataset.claim;render();}
+  else if(b.dataset.cancel){claiming=0;render();}
+  else if(b.dataset.ok){const v=$("cOrg").value.trim();if(!v){$("cOrg").focus();return;}const d=data.find(x=>x.id===+b.dataset.ok);d.status="claimed";d.org=v;d.code=String(1000+Math.floor(Math.random()*9000));claiming=0;render();}
+  else if(b.dataset.rel){const d=data.find(x=>x.id===+b.dataset.rel);d.status="open";d.org="";d.code="";render();}
+});
+$("list").addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="cOrg"){e.preventDefault();$("list").querySelector("[data-ok]").click();}});
+$("fArea").addEventListener("change",e=>{f.area=e.target.value;render();});
+$("fQ").addEventListener("input",e=>{f.q=e.target.value;render();});
+[["fVeg","veg"],["fOpen","open"]].forEach(([id,k])=>$(id).addEventListener("click",e=>{f[k]=!f[k];e.currentTarget.setAttribute("aria-pressed",f[k]);render();}));
+
+$("post").addEventListener("submit",e=>{
+  e.preventDefault();
+  const d=L($("pName").value.trim(),$("pArea").value,$("pItems").value.trim(),Math.max(1,+$("pQty").value||1),$("pType").value,$("pKind").value,+$("pWin").value);
+  d.by=Date.now()+(+$("pWin").value)*M;data.push(d);
+  f.area="";$("fArea").value="";f.q="";$("fQ").value="";render();
+  $("pMsg").textContent=`Posted. ${d.qty} portions from ${d.rest} are on the board until ${clock(d.by)}.`;
+  $("pName").value="";$("pItems").value="";
+});
+[["jR","jRMsg","jRName","Restaurant"],["jO","jOMsg","jOName","Organization"]].forEach(([fid,mid,nid,w])=>$(fid).addEventListener("submit",e=>{
+  e.preventDefault();$(mid).textContent=`Thanks, ${$(nid).value.trim()}. In this demo nothing is sent; a live site would start verification here.`;e.target.reset();
+}));
+
+function calc(){
+  const p=+$("cPor").value,d=+$("cDays").value,m=Math.round(p*d*52/12);
+  $("cPorV").textContent=p;$("cDaysV").textContent=d;
+  $("cOut").textContent=m.toLocaleString("en-IN");
+  $("cKg").textContent=Math.round(m*0.4).toLocaleString("en-IN")+" kg";
+  $("cPlates").innerHTML="<i></i>".repeat(Math.min(300,Math.round(m/10)));
+}
+$("cPor").addEventListener("input",calc);$("cDays").addEventListener("input",calc);
+calc();render();
+const tick=setInterval(()=>{if(!claiming)render()},30000);
+}
+</script>
+</body>
+</html>
